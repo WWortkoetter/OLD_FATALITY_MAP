@@ -17,8 +17,7 @@
   } else {
     // browser globals
     if (typeof window.h337 === 'undefined') {
-      pass;
-      throw new Error('heatmap.js must be loaded before the leaflet heatmap plugin');
+      //throw new Error('heatmap.js must be loaded before the leaflet heatmap plugin');
     }
     if (typeof window.L === 'undefined') {
       throw new Error('Leaflet must be loaded before the leaflet heatmap plugin');
