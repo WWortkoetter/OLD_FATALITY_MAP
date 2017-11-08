@@ -2,22 +2,28 @@
 <html>
 
 <head>
+    <!-- Coded by Wyatt Wortkoetter -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Crash Mapper</title>
+    <title>Crash Mapper v0.1</title>
     <!-- Stylesheets -->
     <link rel="stylesheet" href="leaflet/leaflet.css" />
+    <link rel="stylesheet" href="leaflet/MarkerCluster.css" />
+    <link rel="stylesheet" href="leaflet/MarkerCluster.Default.css" />
     <link rel="stylesheet" href="pure-drawer.css" />
     <link rel="stylesheet" href="toggle-button.css" />
     <link rel="stylesheet" href="myStyle.css" />
     <!-- Scripts -->
-    <script src="leaflet/leaflet.js"></script>
     <script src="FARS_Data_FranklinCounty_AllVariables_2016.js"></script>
-    <script src="d3/d3.min.js"></script>
-    <script src="plotly-latest.min.js"></script>
+    <script src="heatmap-data.js"></script>
+    <!-- <script src="FARS_Ohio_2001-2016.js"></script> -->
+
+    <script src="leaflet/leaflet.js"></script>
+    <script src="leaflet/leaflet.markercluster-src.js"></script>
     <script src="heatmap.js"></script>
     <script src="leaflet-heatmap.js"></script>
-    <script src="tmp.js"></script>
+    <script src="d3/d3.min.js"></script>
+    <script src="plotly-latest.min.js"></script>
     <script src="main.js"></script>
 </head>
 
@@ -35,40 +41,45 @@
                 <div id="sidebarFrame">
                     <div id="sidebarContent">
                         
-                        <div id="heatmapToggle" state=0>
+
+                        <div id="switch">
                             <div class="cntr">
-                                <span>
-                                    <a>Toggle Heatmap</a>
+                                <a>Toggle Heatmap</a>
+                                <span id="heatmapToggle">
                                     <div class="row press">
-                                        <input type="checkbox" id="unchecked" class="cbx hidden" />
+                                        <input type="checkbox" id="unchecked1" class="cbx hidden" />
                                         <label for="unchecked" class="lbl"></label>
-                                        <script>
-                                            var button = document.getElementById("heatmapToggle");
-                                            button.onclick = function() {
-                                                switch(document.getElementById("heatmapToggle").getAttribute("state")) {
-                                                    case 0:
-                                                        document.getElementById("heatmapToggle").setAttribute("state", 1);
-                                                    case 1:
-                                                        document.getElementById("heatmapToggle").setAttribute("state", 0);
-                                                }                                            
-                                            };
-                                        </script>
                                     </div>
                                 </span>
                             </div>
                         </div>
+
+                        <div id="switch">
+                            <div class="cntr">
+                                <a>Toggle Clusters</a>
+                                <span id="clusterToggle">
+                                    <div class="row press">
+                                        <input type="checkbox" id="unchecked2" class="cbx hidden" />
+                                        <label for="unchecked" class="lbl"></label>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
+
                         <div id="sidebarList">
                             Fatality Information
-                            <ul>Location</ul>
-                            <ul>Age</ul>
-                            <ul>Victim Count</ul>
+                            <ul id="info_loc">Location: </ul>
+                            <ul id="info_age">Age: </ul>
+                            <ul id="info_vic">Victim Count: </ul>
                         </div>
+
                     </div>
                 </div>
                 <div id="pcpFrame"></div>
                 <script>
-                    // data/FARS_Data_FranklinCounty_AllVariables_2016.csv
                     // https://raw.githubusercontent.com/bcdunbar/datasets/master/iris.csv
+                    // data/FARS_Data_FranklinCounty_2016_AllVariables.csv
+                    // data/FARS_Ohio_2001-2016.csv
                     Plotly.d3.csv('data/FARS_Data_FranklinCounty_2016_AllVariables.csv', function (err, rows) {
 
                         function unpack(rows, key) {
@@ -83,13 +94,15 @@
                             line: {
                                 color: unpack(rows, 'sex'),
                                 //colorscale: [[0, 'grey'], [1, 'blue'], [2, 'pink'], [8, 'grey'], [9, 'grey']]
-                                colorscale: [[0, 'blue'], [0.5, 'blue'], [1, 'red']]
+                                colorscale: [[0, 'blue'], [0.1, 'red'], [0.5, 'red'], [1, 'red']]
                                 //colorscale: 'Jet'
                             },
 
                             dimensions: [{
-                                range: [1, 2],
-                                label: 'sex (m=1,f=2)',
+                                range: [.5, 2.5],
+                                label: 'sex',
+                                tickvals: [1, 2],
+                                ticktext: ['M', 'F'],
                                 values: unpack(rows, 'sex')
                             }, {
                                 range: [0, 99],
@@ -101,24 +114,32 @@
                                 label: 'numfatal',
                                 values: unpack(rows, 'numfatal')
                             }, {
-                                label: 'BAC',
-                                range: [0, 500],
+                                range: [0, 350],
+                                label: 'BAC %',
+                                tickvals: [50, 100, 150, 200, 250, 300, 350],
+                                ticktext: ['.05', '.10', '.15', '.20', '.25', '.30', '.35'],
                                 values: unpack(rows, 'alcres')
                             }, {
-                                label: 'holiday',
-                                range: [-1, 10],
-                                values: unpack(rows, 'holiday')
+                                range: [1, 7],
+                                label: 'weekday',
+                                tickvals: [1, 2, 3, 4, 5, 6, 7],
+                                ticktext: ['Su', 'M', 'T', 'W', 'R', 'F', 'Sa'],
+                                values: unpack(rows, 'dayofweek')
                             }]
                         }];
 
                         var layout = {
                             // put variables here to change pcp size ('height: 500px;' etc)
+                            title: 'Parallel Coordinate Plot',
+                            margin: { r: 40, t: 100, b: 50, l: 40 }
                         };
 
                         Plotly.plot('pcpFrame', data, layout);
                     });
                 </script>
-
+                <div id="author">
+                    Created by Wyatt Wortkoetter and Evan Kraus
+                </div>
 
             </p>
         </nav>

@@ -23,16 +23,24 @@ dt {
 #sidebarContent {
     position: relative;
     padding: 5px;
-    color: greenyellow;
+    color: #adff2f;
 }
 
-#heatmapToggle {
+#author {
+    font-size: 10pt;
+    color: #adff2f;
+    position: absolute;
+    bottom: 0;
+    padding: 0 0 5px 5px;
+}
+
+#switch {
     position: relative;
     margin-top: 35px;
     margin-bottom: 35px;
 }
 
-#heatmapToggle a{
+#switch a{
     padding-right: 10px;
 }
 
