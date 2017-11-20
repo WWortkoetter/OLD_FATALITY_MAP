@@ -1,9 +1,5 @@
 "use strict";
 
-function personalFilter (feature, layer){
-    return (feature.properties.caseyear == 2006);// && feature.properties.dthday >= 1 && feature.properties["dthday"] <= 31);
-  }
-
 var weatherdict = {
     "-1": "Blank",
     "0": "No Additional Atmospheric Conditions",
@@ -53,28 +49,55 @@ var genderdict = {
     "9": "Unknown"
 }
 
+var yeardict = {
+    "all": heatall,
+    "2016": heat2016,
+    "2015": heat2015,
+    "2014": heat2014,
+    "2013": heat2013,
+    "2012": heat2012,
+    "2011": heat2011,
+    "2010": heat2010,
+    "2009": heat2009,
+    "2008": heat2008,
+    "2007": heat2007,
+    "2006": heat2006
+}
+
 //execute only when window is fully loaded
 window.onload = function () {
+
+    document.getElementById("pure-toggle-right").checked = true;
+
+    function personalFilter(feature, layer) {
+        var yr = document.getElementById("yearval").value;
+        //return (feature.properties.caseyear == yr && feature.properties.dthday >= 1 && feature.properties.dthday <= 31);
+        if (yr == "all"){
+            return (feature.properties.dthyr != 8888 && feature.properties.dthyr != 0);
+        }
+        return (feature.properties.caseyear == yr && feature.properties.dthyr != 8888 && feature.properties.dthyr != 0);
+    }    
+
     var myFunctionHolder = {};
-    
+
     //declaring popups function
     myFunctionHolder.addPopups = function (feature, layer) {
         var survived = '';
-        if (feature.properties['dthday'] == -1 || feature.properties['dthday'] == 88 || feature.properties['dthday'] == 99){
+        if (feature.properties.dthday == -1 || feature.properties.dthday == 88 || feature.properties.dthday == 99) {
             survived = 'Lived';
-        } 
+        }
         else {
             survived = 'Deceased';
         }
-    
+
         var years = '';
-        if (feature.properties['age'] == 999){
+        if (feature.properties['age'] == 999) {
             years = 'Unknown';
         }
         else {
             years = feature.properties['age'];
         }
-    
+
         if (feature.properties) {
             layer.bindPopup(
                 "<b>Date of accident: </b>" + feature.properties.accmon + "/" + feature.properties.accday + "/" + feature.properties.caseyear
@@ -83,11 +106,15 @@ window.onload = function () {
                 + "<br><b>Age: </b>" + years
                 + "<br><b>Sex: </b>" + genderdict[feature.properties.sex]
                 + "<br><b>Race: </b>" + racedict[feature.properties.race]
-                + "<br><b>Status: </b>" + survived
+                + "<br><b>Weather: </b>" + weatherdict[feature.properties.atmcond]
+                //+ "<br><b>Lat: </b>" + feature.geometry.coordinates[0]
+                //+ "<br><b>Lon: </b>" + feature.geometry.coordinates[1]
+                //+ "<br><b>dthyr: </b>" + feature.properties.dthyr
+                //+ "<br><b>Status: </b>" + survived
             );
         }
     }
-    
+
     //declaring point function
     myFunctionHolder.pointToCircle = function (feature, latlng) {
         var geojsonMarkerOptions = {
@@ -99,22 +126,25 @@ window.onload = function () {
             fillOpacity: .8
         };
         var circleMarker = L.circleMarker(latlng, geojsonMarkerOptions);
-        circleMarker.on('click', function(){
+        circleMarker.on('click', function () {
             document.getElementById("info_casenum").innerHTML = "<b>Case Number: </b>" + feature.properties.casenum;
-            document.getElementById("info_date").innerHTML = "<b>Date: </b>" + feature.properties.accmon + "/" + feature.properties.accday + "/" + feature.properties.caseyear;
+            document.getElementById("info_date").innerHTML = "<b>Date of Accident: </b>" + feature.properties.accmon + "/" + feature.properties.accday + "/" + feature.properties.caseyear;
             document.getElementById("info_loc").innerHTML = "<b>Location: </b>" + feature.properties.trafid1;
             document.getElementById("info_age").innerHTML = "<b>Age: </b>" + feature.properties.age;
             document.getElementById("info_numfatal").innerHTML = "<b>Number of Fatalities: </b>" + feature.properties.numfatal;
             document.getElementById("info_weather").innerHTML = "<b>Weather: </b>" + weatherdict[feature.properties.atmcond];
             document.getElementById("info_sex").innerHTML = "<b>Sex: </b>" + genderdict[feature.properties.sex];
             document.getElementById("info_race").innerHTML = "<b>Race: </b>" + racedict[feature.properties.race];
-            if (feature.properties.alcres >= 100){
+            if (feature.properties.alcres == 996 || feature.properties.alcres == 96) {
+                document.getElementById("info_bac").innerHTML = "<b>BAC: </b> Unknown";
+            }
+            else if (feature.properties.alcres >= 100) {
                 document.getElementById("info_bac").innerHTML = "<b>BAC: </b> 0." + feature.properties.alcres + "%";
             }
-            else if (feature.properties.alcres >= 10){
+            else if (feature.properties.alcres >= 10) {
                 document.getElementById("info_bac").innerHTML = "<b>BAC: </b> 0.0" + feature.properties.alcres + "%";
             }
-            else if (feature.properties.alcres == 0){
+            else if (feature.properties.alcres == 0) {
                 document.getElementById("info_bac").innerHTML = "<b>BAC: </b> 0%";
             }
             else {
@@ -132,9 +162,9 @@ window.onload = function () {
     }).addTo(mapObject);
 
     var satToggle = document.getElementById("satToggle");
-    satToggle.onclick = function() {
-        if(!document.getElementById("unchecked3").checked){ // set map to satellite when toggle is on
-            if (mapObject.hasLayer(baseMap)){
+    satToggle.onclick = function () {
+        if (!document.getElementById("unchecked3").checked) { // set map to satellite when toggle is on
+            if (mapObject.hasLayer(baseMap)) {
                 mapObject.removeLayer(baseMap);
             }
             // sat map
@@ -143,12 +173,12 @@ window.onload = function () {
                 attribution: "&copy; <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy;"
             }).addTo(mapObject);
             document.getElementById("unchecked3").checked = true;
-            
+
         }
         else { // set map to dark theme when toggle is off
-            if (mapObject.hasLayer(baseMap)){
+            if (mapObject.hasLayer(baseMap)) {
                 mapObject.removeLayer(baseMap);
-            }            
+            }
             // dark map
             baseMap = L.tileLayer('https://api.mapbox.com/styles/v1/sinba/ciperkjzk001jb6mdcb41o922/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoic2luYmEiLCJhIjoiY2loMWF6czQxMHdwcnZvbTNvMjVhaWV0MyJ9.zu-djzdfyr3C_Uj2F7noqg', {
                 maxZoom: 18,
@@ -168,14 +198,18 @@ window.onload = function () {
     mapObject.addLayer(fatalsLayerGroup);
     mapObject.fitBounds(fatalsLayerGroup.getBounds());
 
+    
+
     // clusters
-    var clusters = L.markerClusterGroup();
+    var clusters = L.markerClusterGroup({
+        filter: personalFilter
+    });
     clusters.addLayer(fatalsLayerGroup);
 
     // button to toggle clusters
     var clustertoggle = document.getElementById("clusterToggle");
-    clustertoggle.onclick = function() {
-        if (!document.getElementById("unchecked2").checked){
+    clustertoggle.onclick = function () {
+        if (!document.getElementById("unchecked2").checked) {
             mapObject.addLayer(clusters);
             document.getElementById("unchecked2").checked = true;
         }
@@ -194,7 +228,7 @@ window.onload = function () {
         // radius should be small ONLY if scaleRadius is true (or small radius is intended)
         // if scaleRadius is false it will be the constant radius used in pixels
         "radius": .015,
-        "maxOpacity": .8,
+        "maxOpacity": .5,
         // scales the radius based on map zoom
         "scaleRadius": true,
         // if set to false the heatmap uses the global maximum for colorization
@@ -206,16 +240,18 @@ window.onload = function () {
         // which field name in your data represents the longitude - default "lng"
         lngField: 'lng',
         // which field name in your data represents the data value - default "value"
-        valueField: 'value'
+        valueField: 'numfatal',
     };
 
+    
     var heatmapLayer = new HeatmapOverlay(cfg);
-    heatmapLayer.setData(fatalitiesHeatmapData);
+
+    heatmapLayer.setData(yeardict[document.getElementById("yearval").value]);
 
     // button to toggle heatmap
     var heattoggle = document.getElementById("heatmapToggle");
-    heattoggle.onclick = function() {
-        if (!document.getElementById("unchecked1").checked){
+    heattoggle.onclick = function () {
+        if (!document.getElementById("unchecked1").checked) {
             mapObject.addLayer(heatmapLayer);
             document.getElementById("unchecked1").checked = true;
         }
@@ -225,5 +261,19 @@ window.onload = function () {
         }
     }
 
-    
+    // year picker
+    document.getElementById("yearval").onchange = function () {
+        mapObject.removeLayer(fatalsLayerGroup);
+        clusters.removeLayer(fatalsLayerGroup);
+        //heatmapLayer = new HeatmapOverlay(cfg);
+        heatmapLayer.setData(yeardict[document.getElementById("yearval").value]);        
+        fatalsLayerGroup = L.geoJSON(fatalities, {
+            onEachFeature: myFunctionHolder.addPopups,
+            pointToLayer: myFunctionHolder.pointToCircle,
+            filter: personalFilter
+        });
+        mapObject.addLayer(fatalsLayerGroup);
+        mapObject.fitBounds(fatalsLayerGroup.getBounds());
+        clusters.addLayer(fatalsLayerGroup);
+    }
 };

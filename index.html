@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+<!-- Coded by Wyatt Wortkoetter -->
+
 <html>
 
 <head>
-    <!-- Coded by Wyatt Wortkoetter -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Crash Mapper v0.2</title>
+    <title>Crash Mapper</title>
     <!-- Stylesheets -->
     <link rel="stylesheet" href="leaflet/leaflet.css" />
     <link rel="stylesheet" href="leaflet/MarkerCluster.css" />
@@ -41,7 +42,7 @@
 
                 <div id="sidebarFrame">
                     <div id="sidebarContent">
-                        <h1>Crash Mapper v0.2</h1>
+                        <h1>Crash Mapper v0.3</h1>
 
 
                         <div id="switch">
@@ -81,19 +82,20 @@
                         </div>
 
                         <div id="yearpicker">
-                            Pick Year
-                            <select>
+                            <a>Pick Year</a>
+                            <select id="yearval">
                                 <option value="2016">2016</option>
                                 <option value="2015">2015</option>
                                 <option value="2014">2014</option>
                                 <option value="2013">2013</option>
-                                <option value="2013">2012</option>
-                                <option value="2013">2011</option>
-                                <option value="2013">2010</option>
-                                <option value="2013">2009</option>
-                                <option value="2013">2008</option>
-                                <option value="2013">2007</option>
-                                <option value="2013">2006</option>
+                                <option value="2012">2012</option>
+                                <option value="2011">2011</option>
+                                <option value="2010">2010</option>
+                                <option value="2009">2009</option>
+                                <option value="2008">2008</option>
+                                <option value="2007">2007</option>
+                                <option value="2006">2006</option>
+                                <option value="all">All Years</option>
                             </select>
                         </div>
 
@@ -106,7 +108,7 @@
                                     <b>Case Number: </b>
                                 </div>
                                 <div id="info_date">
-                                    <b>Date: </b>
+                                    <b>Date of Accident: </b>
                                 </div>
                                 <div id="info_loc">
                                     <b>Location: </b>
