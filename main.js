@@ -219,7 +219,7 @@ window.onload = function () {
                 mapObject.removeLayer(baseMap);
             }
             // dark map
-            baseMap = L.tileLayer('https://api.mapbox.com/styles/v1/wwortkoetter/cj6zgn2fg1i3l2rptebgk0jrs/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoid3dvcnRrb2V0dGVyIiwiYSI6ImNqNnpnbDJkbDAwNWsycm15ZzI2dW1rc2cifQ.z6g-MJ7zdh699j4x_4U80Q', {
+            baseMap = L.tileLayer('https://api.mapbox.com/styles/v1/erkraus/cjahqt4zb97sk2spesjpgheb1/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZXJrcmF1cyIsImEiOiJjajlxYm1hMDM2MG45MnFzNDU3dzgzcmVzIn0.xr26eepd9OU-2qebI9xWrw', {
                 maxZoom: 18,
                 attribution: "&copy; <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy;"
             }).addTo(mapObject);
