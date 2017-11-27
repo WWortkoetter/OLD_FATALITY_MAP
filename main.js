@@ -119,6 +119,7 @@ window.onload = function () {
                 + "<br><b>Sex: </b>" + genderdict[feature.properties.sex]
                 + "<br><b>Race: </b>" + racedict[feature.properties.race]
                 + "<br><b>Weather: </b>" + weatherdict[feature.properties.atmcond]
+                + "<br><b>Lighting: </b>" + lightdict[feature.properties.lightcond]
                 //+ "<br><b>Lat: </b>" + feature.geometry.coordinates[0]
                 //+ "<br><b>Lon: </b>" + feature.geometry.coordinates[1]
                 //+ "<br><b>dthyr: </b>" + feature.properties.dthyr
@@ -142,26 +143,51 @@ window.onload = function () {
             document.getElementById("info_casenum").innerHTML = "<b>Case Number: </b>" + feature.properties.casenum;
             document.getElementById("info_date").innerHTML = "<b>Date of Accident: </b>" + feature.properties.accmon + "/" + feature.properties.accday + "/" + feature.properties.caseyear;
             document.getElementById("info_loc").innerHTML = "<b>Location: </b>" + feature.properties.trafid1;
-            document.getElementById("info_age").innerHTML = "<b>Age: </b>" + feature.properties.age;
+            if (feature.properties.caseyear >= 2009){
+                if (feature.properties.age == 998 || feature.properties.age == 999 || feature.properties.age == -1){
+                    document.getElementById("info_age").innerHTML = "<b>Age: </b>Unknown";
+                }
+                else {
+                    document.getElementById("info_age").innerHTML = "<b>Age: </b>" + feature.properties.age;
+                }
+            }
+            else {
+                if (feature.properties.age > 97 || feature.properties.age == -1){
+                    document.getElementById("info_age").innerHTML = "<b>Age: </b>Unknown"; 
+                }
+                else {
+                    document.getElementById("info_age").innerHTML = "<b>Age: </b>" + feature.properties.age;
+                }
+            }
             document.getElementById("info_numfatal").innerHTML = "<b>Number of Fatalities: </b>" + feature.properties.numfatal;
             document.getElementById("info_weather").innerHTML = "<b>Weather: </b>" + weatherdict[feature.properties.atmcond];
             document.getElementById("info_light").innerHTML = "<b>Lighting: </b>" + lightdict[feature.properties.lightcond];
             document.getElementById("info_sex").innerHTML = "<b>Sex: </b>" + genderdict[feature.properties.sex];
             document.getElementById("info_race").innerHTML = "<b>Race: </b>" + racedict[feature.properties.race];
-            if (feature.properties.alcres == 996 || feature.properties.alcres == 96 || feature.properties.alcres == '.') {
-                document.getElementById("info_bac").innerHTML = "<b>BAC: </b> Unknown";
-            }
-            else if (feature.properties.alcres >= 100) {
-                document.getElementById("info_bac").innerHTML = "<b>BAC: </b> 0." + feature.properties.alcres + "%";
-            }
-            else if (feature.properties.alcres >= 10) {
-                document.getElementById("info_bac").innerHTML = "<b>BAC: </b> 0." + feature.properties.alcres + "%";
-            }
-            else if (feature.properties.alcres == 0) {
-                document.getElementById("info_bac").innerHTML = "<b>BAC: </b> 0%";
+            if (feature.properties.caseyear >= 2015){
+                if (feature.properties.alcres >= 995 || feature.properties.alcres == -1) {
+                    document.getElementById("info_bac").innerHTML = "<b>BAC: </b>Unknown";
+                }
+                else if (feature.properties.alcres >= 100) {
+                    document.getElementById("info_bac").innerHTML = "<b>BAC: </b>0." + feature.properties.alcres + "%";
+                }
+                else if (feature.properties.alcres >= 10) {
+                    document.getElementById("info_bac").innerHTML = "<b>BAC: </b> 0.0" + feature.properties.alcres + "%";
+                }
+                else if (feature.properties.alcres >= 0) {
+                    document.getElementById("info_bac").innerHTML = "<b>BAC: </b> 0.00" + feature.properties.alcres + "%";
+                }
             }
             else {
-                document.getElementById("info_bac").innerHTML = "<b>BAC: </b> 0.00" + feature.properties.alcres + "%";
+                if (feature.properties.alcres >= 95 || feature.properties.alcres == -1){
+                    document.getElementById("info_bac").innerHTML = "<b>BAC: </b> Unknown";
+                }
+                else if (feature.properties.alcres >= 10) {
+                    document.getElementById("info_bac").innerHTML = "<b>BAC: </b> 0." + feature.properties.alcres + "%";
+                }
+                else if (feature.properties.alcres >= 0) {
+                    document.getElementById("info_bac").innerHTML = "<b>BAC: </b> 0.0" + feature.properties.alcres + "%";
+                }
             }
         })
         return circleMarker;
@@ -169,7 +195,7 @@ window.onload = function () {
 
     var mapObject = L.map('mapDivId').setView([39.961, -82.998], 11);
 
-    var baseMap = L.tileLayer('https://api.mapbox.com/styles/v1/sinba/ciperkjzk001jb6mdcb41o922/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoic2luYmEiLCJhIjoiY2loMWF6czQxMHdwcnZvbTNvMjVhaWV0MyJ9.zu-djzdfyr3C_Uj2F7noqg', {
+    var baseMap = L.tileLayer('https://api.mapbox.com/styles/v1/wwortkoetter/cj6zgn2fg1i3l2rptebgk0jrs/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoid3dvcnRrb2V0dGVyIiwiYSI6ImNqNnpnbDJkbDAwNWsycm15ZzI2dW1rc2cifQ.z6g-MJ7zdh699j4x_4U80Q', {
         maxZoom: 18,
         attribution: "&copy; <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy;"
     }).addTo(mapObject);
@@ -193,7 +219,7 @@ window.onload = function () {
                 mapObject.removeLayer(baseMap);
             }
             // dark map
-            baseMap = L.tileLayer('https://api.mapbox.com/styles/v1/sinba/ciperkjzk001jb6mdcb41o922/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoic2luYmEiLCJhIjoiY2loMWF6czQxMHdwcnZvbTNvMjVhaWV0MyJ9.zu-djzdfyr3C_Uj2F7noqg', {
+            baseMap = L.tileLayer('https://api.mapbox.com/styles/v1/wwortkoetter/cj6zgn2fg1i3l2rptebgk0jrs/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoid3dvcnRrb2V0dGVyIiwiYSI6ImNqNnpnbDJkbDAwNWsycm15ZzI2dW1rc2cifQ.z6g-MJ7zdh699j4x_4U80Q', {
                 maxZoom: 18,
                 attribution: "&copy; <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy;"
             }).addTo(mapObject);
@@ -219,20 +245,7 @@ window.onload = function () {
     });
     clusters.addLayer(fatalsLayerGroup);
 
-    // button to toggle clusters
-    var clustertoggle = document.getElementById("clusterToggle");
-    clustertoggle.onclick = function () {
-        if (!document.getElementById("unchecked3").checked) {
-            mapObject.addLayer(clusters);
-            document.getElementById("unchecked3").checked = true;
-        }
-        else {
-            mapObject.removeLayer(clusters);
-            mapObject.removeLayer(fatalsLayerGroup);
-            mapObject.addLayer(fatalsLayerGroup);
-            document.getElementById("unchecked3").checked = false;
-        }
-    }
+    
 
     // heatmap
 
@@ -266,6 +279,8 @@ window.onload = function () {
     pointtoggle.onclick = function () {
         if (!document.getElementById("unchecked1").checked) {
             mapObject.removeLayer(fatalsLayerGroup);
+            mapObject.removeLayer(clusters);
+            document.getElementById("unchecked3").checked = false;
             document.getElementById("unchecked1").checked = true;
         }
         else {
@@ -273,6 +288,23 @@ window.onload = function () {
             document.getElementById("unchecked1").checked = false;
         }
     };
+
+    // button to toggle clusters
+    var clustertoggle = document.getElementById("clusterToggle");
+    clustertoggle.onclick = function () {
+        if (!document.getElementById("unchecked3").checked && !document.getElementById("unchecked1").checked) {
+            mapObject.addLayer(clusters);
+            document.getElementById("unchecked3").checked = true;
+        }
+        else {
+            mapObject.removeLayer(clusters);
+            mapObject.removeLayer(fatalsLayerGroup);
+            if (!document.getElementById("unchecked1").checked){
+                mapObject.addLayer(fatalsLayerGroup);
+            }
+            document.getElementById("unchecked3").checked = false;
+        }
+    }
 
     // button to toggle heatmap
     var heattoggle = document.getElementById("heatmapToggle");
@@ -287,14 +319,10 @@ window.onload = function () {
         }
     }
 
-  
-   
-
     // year picker
     document.getElementById("yearval").onchange = function () {
         mapObject.removeLayer(fatalsLayerGroup);
         clusters.removeLayer(fatalsLayerGroup);
-        //heatmapLayer = new HeatmapOverlay(cfg);
         heatmapLayer.setData(yeardict[document.getElementById("yearval").value]);        
         fatalsLayerGroup = L.geoJSON(fatalities, {
             onEachFeature: myFunctionHolder.addPopups,
@@ -303,6 +331,9 @@ window.onload = function () {
         });
         mapObject.addLayer(fatalsLayerGroup);
         mapObject.fitBounds(fatalsLayerGroup.getBounds());
+        if (document.getElementById("unchecked1").checked){
+            mapObject.removeLayer(fatalsLayerGroup);
+        }
         clusters.addLayer(fatalsLayerGroup);
     }
 };

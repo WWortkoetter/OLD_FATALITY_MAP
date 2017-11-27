@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Coded by Wyatt Wortkoetter -->
+<!-- Coded by Wyatt Wortkoetter & Evan Kraus-->
 
 <html>
 
@@ -42,30 +42,18 @@
 
                 <div id="sidebarFrame">
                     <div id="sidebarContent">
-                        <h1>Crash Mapper v0.3</h1>
+                        <h1>Crash Mapper v0.4</h1>
                         <div id="onOff">
-                            <p>On/Off</p>        
+                            <p>Off/On</p>        
                         </div>
                         
                         
                         <div id="switch">        
                             <div class="cntr">
-                                <a>Toggle Points</a>
+                                <a>Hide Points</a>
                                 <span id="pointToggle">
                                     <div class="row press">
                                         <input type="checkbox" id="unchecked1" class="cbx hidden" />
-                                        <label for="unchecked" class="lbl"></label>
-                                    </div>
-                                </span>
-                            </div>
-                        </div>
-
-                        <div id="switch">
-                            <div class="cntr">
-                                <a>Toggle Heatmap</a>
-                                <span id="heatmapToggle">
-                                    <div class="row press">
-                                        <input type="checkbox" id="unchecked2" class="cbx hidden" />
                                         <label for="unchecked" class="lbl"></label>
                                     </div>
                                 </span>
@@ -78,6 +66,18 @@
                                 <span id="clusterToggle">
                                     <div class="row press">
                                         <input type="checkbox" id="unchecked3" class="cbx hidden" />
+                                        <label for="unchecked" class="lbl"></label>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div id="switch">
+                            <div class="cntr">
+                                <a>Toggle Heatmap</a>
+                                <span id="heatmapToggle">
+                                    <div class="row press">
+                                        <input type="checkbox" id="unchecked2" class="cbx hidden" />
                                         <label for="unchecked" class="lbl"></label>
                                     </div>
                                 </span>
@@ -162,7 +162,7 @@
                     // https://raw.githubusercontent.com/bcdunbar/datasets/master/iris.csv
                     // data/FARS_Data_FranklinCounty_2016_AllVariables.csv
                     // data/FARS_Ohio_2001-2016.csv
-                    Plotly.d3.csv('data/FARS_Ohio_2001-2016.csv', function (err, rows) {
+                    Plotly.d3.csv('data/FARS_Ohio_2006-2016.csv', function (err, rows) {
 
                         function unpack(rows, key) {
                             return rows.map(function (row) {
@@ -192,16 +192,17 @@
                                 values: unpack(rows, 'age')
                             }, {
                                 //constraintrange: [0, 99],
-                                range: [0, 4],
+                                range: [1, 6],
                                 label: 'numfatal',
-                                tickvals: [0, 1, 2, 3, 4],
-                                ticktext: ['0', '1', '2', '3', '4'],
+                                tickvals: [1, 2, 3, 4, 5, 6],
+                                ticktext: ['1', '2', '3', '4', '5', '6'],
                                 values: unpack(rows, 'numfatal')
                             }, {
-                                range: [0, 1000],
+                                range: [-10, 45],
                                 label: 'BAC %',
-                                tickvals: [0, 50, 100, 150, 200, 250, 300, 350, 1000],
-                                ticktext: ['0', '.05', '.10', '.15', '.20', '.25', '.30', '.35', 'N/A'],
+                                //tickvals: [0, 50, 100, 150, 200, 250, 300, 350, 1000],
+                                tickvals: [-5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45],
+                                ticktext: ['Unk.', '0', '.05', '.10', '.15', '.20', '.25', '.30', '.35', '.40', '.45'],
                                 values: unpack(rows, 'alcres')
                             }, {
                                 range: [1, 7],
@@ -214,8 +215,8 @@
 
                         var layout = {
                             // put variables here to change pcp size ('height: 500px;' etc)
-                            title: 'Parallel Coordinate Plot',
-                            margin: { r: 40, t: 100, b: 50, l: 40 },
+                            title: 'Parallel Coordinate Plot (All Years)',
+                            margin: { r: 40, t: 100, b: 40, l: 40 },
                             height: 300
                         };
 
@@ -224,6 +225,9 @@
                 </script>
                 <div id="author">
                     Created by Wyatt Wortkoetter and Evan Kraus
+                    <br>Geography 5201 - Geovisualization
+                    <br>Prof. Morteza Karimzadeh
+                    <br>The Ohio State University
                 </div>
 
             </p>
