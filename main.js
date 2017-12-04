@@ -76,19 +76,31 @@ var lightdict = {
     "8": "Not Reported",
     "9": "Unknown"
 }
+
 //execute only when window is fully loaded
 window.onload = function () {
 
     document.getElementById("pure-toggle-right").checked = true;
 
+    var infobutton = document.getElementById("infoButton");
+    var desc1 = "Welcome to Crash Mapper.";
+    var desc2 = "\n\nThis application is designed to better visualize vehicular deaths in the Columbus area\nin an effort to better understand the connecting factors between these instances.";
+    var desc3 = "\n\nMake use of the many features of this application to better make correlations:\n - Hiding the points can be useful to declutter the map to better find points of interest.\n - Clustering can identify those points where 2 or more deaths occured.\n - The heatmap will paint the area with various colors to more easily highlight those areas with higher densities of fatalities.\n - The satellite toggle will change the map to a photographic view.";
+    var credits = "\n\nCreated by Wyatt Wortkeotter and Evan Kraus\nGeography 5201 - Geovisualization\nProf. Morteza Karimzadeh\nThe Ohio State University";
+    var infotext = desc1 + desc2 + desc3 + credits;
+    infobutton.onclick = function() {
+        //alert("Created by Wyatt Wortkoetter and Evan Kraus\nGeography 5201 - Geovisualization\nProf. Morteza Karimzadeh\nThe Ohio State University");
+        alert(infotext);
+    }
+
     function personalFilter(feature, layer) {
         var yr = document.getElementById("yearval").value;
         //return (feature.properties.caseyear == yr && feature.properties.dthday >= 1 && feature.properties.dthday <= 31);
-        if (yr == "all"){
+        if (yr == "all") {
             return (feature.properties.dthyr != 8888 && feature.properties.dthyr != 0);
         }
         return (feature.properties.caseyear == yr && feature.properties.dthyr != 8888 && feature.properties.dthyr != 0);
-    }    
+    }
 
     var myFunctionHolder = {};
 
@@ -103,11 +115,11 @@ window.onload = function () {
         }
 
         var years = '';
-        if (feature.properties['age'] == 999) {
+        if (feature.properties.age == 999) {
             years = 'Unknown';
         }
         else {
-            years = feature.properties['age'];
+            years = feature.properties.age;
         }
 
         if (feature.properties) {
@@ -120,10 +132,6 @@ window.onload = function () {
                 + "<br><b>Race: </b>" + racedict[feature.properties.race]
                 + "<br><b>Weather: </b>" + weatherdict[feature.properties.atmcond]
                 + "<br><b>Lighting: </b>" + lightdict[feature.properties.lightcond]
-                //+ "<br><b>Lat: </b>" + feature.geometry.coordinates[0]
-                //+ "<br><b>Lon: </b>" + feature.geometry.coordinates[1]
-                //+ "<br><b>dthyr: </b>" + feature.properties.dthyr
-                //+ "<br><b>Status: </b>" + survived
             );
         }
     }
@@ -143,8 +151,8 @@ window.onload = function () {
             document.getElementById("info_casenum").innerHTML = "<b>Case Number: </b>" + feature.properties.casenum;
             document.getElementById("info_date").innerHTML = "<b>Date of Accident: </b>" + feature.properties.accmon + "/" + feature.properties.accday + "/" + feature.properties.caseyear;
             document.getElementById("info_loc").innerHTML = "<b>Location: </b>" + feature.properties.trafid1;
-            if (feature.properties.caseyear >= 2009){
-                if (feature.properties.age == 998 || feature.properties.age == 999 || feature.properties.age == -1){
+            if (feature.properties.caseyear >= 2009) {
+                if (feature.properties.age == 998 || feature.properties.age == 999 || feature.properties.age == -1) {
                     document.getElementById("info_age").innerHTML = "<b>Age: </b>Unknown";
                 }
                 else {
@@ -152,8 +160,8 @@ window.onload = function () {
                 }
             }
             else {
-                if (feature.properties.age > 97 || feature.properties.age == -1){
-                    document.getElementById("info_age").innerHTML = "<b>Age: </b>Unknown"; 
+                if (feature.properties.age > 97 || feature.properties.age == -1) {
+                    document.getElementById("info_age").innerHTML = "<b>Age: </b>Unknown";
                 }
                 else {
                     document.getElementById("info_age").innerHTML = "<b>Age: </b>" + feature.properties.age;
@@ -164,7 +172,7 @@ window.onload = function () {
             document.getElementById("info_light").innerHTML = "<b>Lighting: </b>" + lightdict[feature.properties.lightcond];
             document.getElementById("info_sex").innerHTML = "<b>Sex: </b>" + genderdict[feature.properties.sex];
             document.getElementById("info_race").innerHTML = "<b>Race: </b>" + racedict[feature.properties.race];
-            if (feature.properties.caseyear >= 2015){
+            if (feature.properties.caseyear >= 2015) {
                 if (feature.properties.alcres >= 995 || feature.properties.alcres == -1) {
                     document.getElementById("info_bac").innerHTML = "<b>BAC: </b>Unknown";
                 }
@@ -179,7 +187,7 @@ window.onload = function () {
                 }
             }
             else {
-                if (feature.properties.alcres >= 95 || feature.properties.alcres == -1){
+                if (feature.properties.alcres >= 95 || feature.properties.alcres == -1) {
                     document.getElementById("info_bac").innerHTML = "<b>BAC: </b> Unknown";
                 }
                 else if (feature.properties.alcres >= 10) {
@@ -193,11 +201,11 @@ window.onload = function () {
         return circleMarker;
     }
 
-    var mapObject = L.map('mapDivId').setView([39.97, -82.85], 11);
+    var mapObject = L.map('mapDivId').setView([39.961, -82.89], 11);
 
     var baseMap = L.tileLayer('https://api.mapbox.com/styles/v1/erkraus/cjahqt4zb97sk2spesjpgheb1/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZXJrcmF1cyIsImEiOiJjajlxYm1hMDM2MG45MnFzNDU3dzgzcmVzIn0.xr26eepd9OU-2qebI9xWrw', {
         maxZoom: 18,
-        attribution: "&copy; <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy;"
+        attribution: "&copy; <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; Data from <a href='https://www-fars.nhtsa.dot.gov//QueryTool/QuerySection/SelectYear.aspx'>FARS</a>"
     }).addTo(mapObject);
 
     var satToggle = document.getElementById("satToggle");
@@ -209,7 +217,7 @@ window.onload = function () {
             // sat map
             baseMap = L.tileLayer('https://api.mapbox.com/styles/v1/erkraus/cj9qdvp6o034n2sk6uc26w51p/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZXJrcmF1cyIsImEiOiJjajlxYm1hMDM2MG45MnFzNDU3dzgzcmVzIn0.xr26eepd9OU-2qebI9xWrw', {
                 maxZoom: 18,
-                attribution: "&copy; <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy;"
+                attribution: "&copy; <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; Data from <a href='https://www-fars.nhtsa.dot.gov//QueryTool/QuerySection/SelectYear.aspx'>FARS</a>"
             }).addTo(mapObject);
             document.getElementById("unchecked4").checked = true;
 
@@ -221,7 +229,7 @@ window.onload = function () {
             // dark map
             baseMap = L.tileLayer('https://api.mapbox.com/styles/v1/erkraus/cjahqt4zb97sk2spesjpgheb1/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZXJrcmF1cyIsImEiOiJjajlxYm1hMDM2MG45MnFzNDU3dzgzcmVzIn0.xr26eepd9OU-2qebI9xWrw', {
                 maxZoom: 18,
-                attribution: "&copy; <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy;"
+                attribution: "&copy; <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> &copy; Data from <a href='https://www-fars.nhtsa.dot.gov//QueryTool/QuerySection/SelectYear.aspx'>FARS</a>"
             }).addTo(mapObject);
             document.getElementById("unchecked4").checked = false;
         }
@@ -235,15 +243,12 @@ window.onload = function () {
     });
 
     mapObject.addLayer(fatalsLayerGroup);
-    
 
     // clusters
     var clusters = L.markerClusterGroup({
         filter: personalFilter
     });
     clusters.addLayer(fatalsLayerGroup);
-
-    
 
     // heatmap
 
@@ -267,7 +272,6 @@ window.onload = function () {
         valueField: 'numfatal',
     };
 
-    
     var heatmapLayer = new HeatmapOverlay(cfg);
 
     heatmapLayer.setData(yeardict[document.getElementById("yearval").value]);
@@ -302,7 +306,7 @@ window.onload = function () {
             }
             document.getElementById("unchecked3").checked = false;
         }
-    }
+    };
 
     // button to toggle heatmap
     var heattoggle = document.getElementById("heatmapToggle");
@@ -315,13 +319,14 @@ window.onload = function () {
             mapObject.removeLayer(heatmapLayer);
             document.getElementById("unchecked2").checked = false;
         }
-    }
+    };
 
     // year picker
     document.getElementById("yearval").onchange = function () {
         mapObject.removeLayer(fatalsLayerGroup);
         clusters.removeLayer(fatalsLayerGroup);
-        heatmapLayer.setData(yeardict[document.getElementById("yearval").value]);        
+        //heatmapLayer = new HeatmapOverlay(cfg);
+        heatmapLayer.setData(yeardict[document.getElementById("yearval").value]);
         fatalsLayerGroup = L.geoJSON(fatalities, {
             onEachFeature: myFunctionHolder.addPopups,
             pointToLayer: myFunctionHolder.pointToCircle,
@@ -334,3 +339,5 @@ window.onload = function () {
         clusters.addLayer(fatalsLayerGroup);
     }
 };
+
+
